@@ -2,6 +2,8 @@ import axios from 'axios';
 
 import SlimSelect from 'slim-select';
 
+import Notiflix from 'notiflix';
+
 const API_URL = 'https://api.thecatapi.com/v1';
 const API_KEY =
   'live_rdqKQpQH7r8MY4Lzyhl1EEiE7Zu78twyJjqhu6IaaFbJB22oKkqTfojVvEZQHCiB';
@@ -13,7 +15,10 @@ export const fetchBreeds = () => {
     .get(`${API_URL}/breeds`)
     .then(response => response.data)
     .catch(error => {
-      console.error('Błąd podczas pobierania ras:', error);
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!',
+        error
+      );
       throw error;
     });
 };
@@ -23,8 +28,8 @@ export const fetchCatByBreed = breedId => {
     .get(`${API_URL}/images/search?breed_ids=${breedId}`)
     .then(response => response.data[0])
     .catch(error => {
-      console.error(
-        `Błąd podczas pobierania informacji o kocie dla rasy ${breedId}:`,
+      Notiflix.Notify.failure(
+        `Oops! Something went wrong! Try reloading the page!`,
         error
       );
       throw error;
@@ -62,27 +67,51 @@ breedSelect.addEventListener('change', function () {
         catInfo.removeChild(catInfo.firstChild);
       }
 
+      const container = document.createElement('div');
+      container.style.display = 'flex';
+
+      const imgContainer = document.createElement('div');
+      imgContainer.style.width = '40%';
+      imgContainer.style.marginRight = '20px';
+
       const img = document.createElement('img');
       img.src = cat.url;
-      catInfo.appendChild(img);
+      img.width = 500;
+      imgContainer.appendChild(img);
+
+      container.appendChild(imgContainer);
+
+      const textContainer = document.createElement('div');
+      textContainer.style.width = '50%';
 
       const name = document.createElement('h2');
       name.textContent = cat.breeds[0].name;
-      catInfo.appendChild(name);
+      textContainer.appendChild(name);
 
       const description = document.createElement('p');
       description.textContent = cat.breeds[0].description;
-      catInfo.appendChild(description);
+      textContainer.appendChild(description);
+
+      const temperamentLabel = document.createElement('strong');
+      temperamentLabel.textContent = 'Temperament: ';
 
       const temperament = document.createElement('p');
-      temperament.textContent = cat.breeds[0].temperament;
-      catInfo.appendChild(temperament);
+      temperament.appendChild(temperamentLabel);
+      temperament.appendChild(
+        document.createTextNode(cat.breeds[0].temperament)
+      );
+
+      textContainer.appendChild(temperament);
+
+      container.appendChild(textContainer);
+
+      catInfo.appendChild(container);
 
       error.classList.remove('show');
     })
     .catch(() => {
-      error.textContent =
-        'Wystąpił błąd podczas pobierania informacji o kocie.';
+      Notiflix.Notify.failure =
+        'Oops! Something went wrong! Try reloading the page!';
       error.classList.add('show');
     });
 });
