@@ -1,14 +1,27 @@
 import axios from 'axios';
 
 import SlimSelect from 'slim-select';
+import 'slim-select/dist/slimselect.css';
 
 import Notiflix from 'notiflix';
+
+console.log(Notiflix);
 
 const API_URL = 'https://api.thecatapi.com/v1';
 const API_KEY =
   'live_rdqKQpQH7r8MY4Lzyhl1EEiE7Zu78twyJjqhu6IaaFbJB22oKkqTfojVvEZQHCiB';
 
 axios.defaults.headers.common['X-api-key'] = API_KEY;
+
+const loader = document.querySelector('.loader');
+const error = document.querySelector('.error');
+const breedSelect = document.querySelector('.breed-select');
+const catInfo = document.querySelector('.cat-info');
+
+loader.classList.add('hide');
+error.classList.remove('show');
+breedSelect.classList.add('hide');
+catInfo.classList.add('hide');
 
 export const fetchBreeds = () => {
   return axios
@@ -36,22 +49,18 @@ export const fetchCatByBreed = breedId => {
     });
 };
 
-const loader = document.querySelector('.loader');
-const error = document.querySelector('.error');
-const breedSelect = document.querySelector('.breed-select');
-const catInfo = document.querySelector('.cat-info');
-
-loader.classList.add('show');
-error.classList.remove('show');
-
 fetchBreeds()
   .then(breeds => {
     loader.classList.remove('show');
+    breedSelect.classList.remove('hide');
     breeds.forEach(breed => {
       const option = document.createElement('option');
       option.value = breed.id;
       option.text = breed.name;
       breedSelect.appendChild(option);
+    });
+    new SlimSelect({
+      select: '.breed-select',
     });
   })
   .catch(() => {
@@ -61,8 +70,12 @@ fetchBreeds()
 
 breedSelect.addEventListener('change', function () {
   const breedId = this.value;
+  loader.classList.add('show');
+  catInfo.classList.add('hide');
   fetchCatByBreed(breedId)
     .then(cat => {
+      loader.classList.remove('show');
+      catInfo.classList.remove('hide');
       while (catInfo.firstChild) {
         catInfo.removeChild(catInfo.firstChild);
       }
@@ -110,8 +123,10 @@ breedSelect.addEventListener('change', function () {
       error.classList.remove('show');
     })
     .catch(() => {
-      Notiflix.Notify.failure =
-        'Oops! Something went wrong! Try reloading the page!';
+      loader.classList.remove('show');
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
       error.classList.add('show');
     });
 });

@@ -10,16 +10,31 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
+    .ss-main {
+      width: 300px;
+    }
+
+    .hide {
+      display: none;
+    }
+
+    .show {
+      display: block !important;
+    }
+
     .loader {
-      color: #ffffff;
-      font-size: 45px;
-      text-indent: -9999em;
+      color: black;
+      font-size: 25px;
       overflow: hidden;
       width: 1em;
       height: 1em;
       border-radius: 50%;
-      position: relative;
-      transform: translateZ(0);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: auto;
       animation: mltShdSpin 1.7s infinite ease, round 1.7s infinite ease;
     }
 
@@ -75,7 +90,7 @@
 </head>
 
 <body>
-  <select class="breed-select"></select>
+  <select class="breed-select" option></select>
   <span class="loader"></span>
   <p class="error"></p>
   <div class="cat-info"></div>
