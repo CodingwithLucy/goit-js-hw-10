@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 import axios from 'axios';
 
 import SlimSelect from 'slim-select';
@@ -8,8 +10,7 @@ import Notiflix from 'notiflix';
 console.log(Notiflix);
 
 const API_URL = 'https://api.thecatapi.com/v1';
-const API_KEY =
-  'live_rdqKQpQH7r8MY4Lzyhl1EEiE7Zu78twyJjqhu6IaaFbJB22oKkqTfojVvEZQHCiB';
+const API_KEY = process.env.API_KEY;
 
 axios.defaults.headers.common['X-api-key'] = API_KEY;
 
